@@ -122,6 +122,12 @@ com! -nargs=1 -complete=help H :tab help <args>
 com! -nargs=* T :VimwikiTable <args>
 "}}}
 
+"{{{ autocommand
+if has('autocmd')
+    auto FileType help set number
+endif
+"}}}
+
 "{{{ plugin configurations
 call pathogen#infect()
 let g:Powerline_symbols = 'fancy'
