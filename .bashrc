@@ -126,7 +126,7 @@ bold() {
 }
 
 big() {
-    toilet -f mono12 "$@"
+    toilet -f future "$@"
 }
 
 
@@ -147,7 +147,7 @@ sw() {
 # ad
 ad() {
     clear
-    big http://hjkl.me
+    toilet -f smmono9 hjkl.me
 }
 
 # source .bashrc
