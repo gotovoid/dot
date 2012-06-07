@@ -1,20 +1,22 @@
 "
-" Truely understand every line of ~/.vimrc!
-" Updated: 2012-06-01 13:09:56
+" Truly understand ~/.vimrc!
+" Owner:    Kev++
+" Updated:  2012-06-07 10:30:20
 "
 
-"{{{ options
+" options {{{
 set nocompatible nolinebreak nowrap nocursorline
 set autoindent smartindent
+set autoread
 set backspace=indent,eol,start
 set clipboard=unnamedplus
 set colorcolumn=100
+set complete+=kspell
 set cryptmethod=blowfish
-set fenc=utf-8 enc=utf-8
-set fencs=utf-8,chinese,latin1
+set fencs=utf-8,chinese,latin1 fenc=utf-8 enc=utf-8
 set foldnestmax=2
-" I don't want auto wrap long text, and I don't use 坏企鹅!
-set formatoptions=mnoqq
+" don't auto wrap long text
+"set formatoptions=mnoq
 " gVim will load `$VIM/vimrc` before loading `~/.vimrc`,
 " add `finish` at the beginning of `$VIM/vimrc` to hide `Menu`,
 " because `$VIM/vimrc` calls `syntax on` which will build menu!
@@ -24,46 +26,63 @@ set hidden
 set hlsearch incsearch
 set isfname-==
 set laststatus=2
-set listchars=precedes:«,extends:»,tab:▸·,trail:·,eol:¶
+set listchars=precedes:«,extends:»,tab:▸·,trail:∙,eol:¶
 set mouse=a
-set number
-set pastetoggle=<F12>
+set number numberwidth=4 showbreak=\ \ \ ↳ cpo+=n
+set pastetoggle=<F7>
 set ruler
 set shiftwidth=4 tabstop=4 softtabstop=4 expandtab
 set showcmd
 set showmatch matchpairs+=<:> matchtime=2
 set sidescroll=1 sidescrolloff=1
+set spelllang=en
 set splitright splitbelow
 set tabpagemax=50
-set tags=./tags;/ path+=C:/MinGW/include
+set tags=./tags;/,~/.vim/tags path=.,/usr/local/include,/usr/include
 set timeoutlen=500
 set virtualedit=block
+set wrapscan
 set wildignore=*.swp,*.bak,*.pyc,*~
 set wildignorecase
 set wildmenu
 "}}}
 
-"{{{ shortcuts
+" mappings {{{
 let mapleader = ","
 nnoremap <C-l>           gt
 nnoremap <C-h>           gT
 nnoremap <C-j>           <C-e>
 nnoremap <C-k>           <C-y>
-nnoremap <leader>s     : so $MYVIMRC<CR>
-nnoremap <leader>v     : tabe $MYVIMRC<CR>
-nnoremap <leader>t     : tabe<CR>
-nnoremap <leader>q     : q<CR>
-nnoremap <leader>f     : !firefox %<CR>
-nnoremap <backspace>   : noh<CR>
-nnoremap <S-leftmouse> : echo synIDattr(synstack(line('.'), col('.'))[0], 'name')<CR>
-nnoremap <s-leftmouse> : echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">" . " FG:" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"fg#")<CR>
+nnoremap <leader>s       : so $MYVIMRC<CR>
+nnoremap <leader>v       : tabe $MYVIMRC<CR>
+nnoremap <leader>t       : tabe<CR>
+nnoremap <leader>q       : q<CR>
+nnoremap <leader>f       : !firefox %<CR>
+nnoremap <backspace>     : noh<CR>
 nnoremap <leader><space> : NERDTreeToggle<CR>
 nnoremap <leader><enter> : NERDTreeToggle<CR>
 inoremap <C-d>           <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 inoremap <C-t>           <C-r>=strftime('%H:%M:%S')<CR>
 "}}}
 
-"{{{ functions
+" commands {{{
+com! HJKL :lcd ~/github/hjkl
+com! HT :helptags ~/.vim/doc
+com! CD :lcd %:h
+com! -nargs=1 -complete=help H :tab help <args>
+com! -nargs=* T :VimwikiTable <args>
+"}}}
+
+" autocmds {{{
+if has('autocmd')
+    au FileType text setl spell
+    au FileType help setl number nospell
+    au FileType html setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
+    au FileType *    setl textwidth=0
+endif
+"}}}
+
+" functions {{{
 nnoremap <C-kPlus>     : call IncFontSize(+1)<CR>
 nnoremap <C-kMinus>    : call IncFontSize(-1)<CR>
 nnoremap <C-k0>        : call IncFontSize(0)<CR>
@@ -81,7 +100,7 @@ endfun
 
 nmap <C-F9> :sign unplace *<CR>
 nmap <F9> :call ToggleBookmark()<CR>
-sign define TODO text=* texthl=Search linehl=Todo
+sign define TODO text=● texthl=ErrorMsg linehl=NONE
 fun! ToggleBookmark()
     try
         sign unplace
@@ -104,7 +123,7 @@ try:
     from urllib import urlencode
     url = 'http://www.google.com/ig/api?' + urlencode({'hl':'zh-cn', 'weather':vim.eval('a:city')})
     xml = ET.XML(unicode(urlopen(url).read() ,'gb2312').encode('utf-8')).find('.//forecast_conditions')
-    if not xml:
+    if xml is not None:
         raise Exception('city not found!')
     weather = dict((x.tag, x.get('data').encode('utf-8')) for x in xml.getchildren())
     vim.command('return "%s(%s°C~%s°C)"' % (weather['condition'], weather['low'], weather['high']))
@@ -114,21 +133,7 @@ _EOF_
 endfun
 "}}}
 
-"{{{ custom commands
-com! HJKL :lcd ~/github/hjkl
-com! HT :helptags ~/.vim/doc
-com! CD :lcd %:h
-com! -nargs=1 -complete=help H :tab help <args>
-com! -nargs=* T :VimwikiTable <args>
-"}}}
-
-"{{{ autocommand
-if has('autocmd')
-    auto FileType help set number
-endif
-"}}}
-
-"{{{ plugin configurations
+" plugins {{{
 call pathogen#infect()
 let g:Powerline_symbols = 'fancy'
 let g:solarized_menu=0
@@ -140,7 +145,7 @@ let g:vimwiki_html_header_numbering_sym='.'
 "               \ 'path_html': '~/github/hjkl/posts/'}]
 "}}}
 
-"{{{ syntax highlighting
+" syntaxs {{{
 if &term =~ "xterm"
     set t_Co=256
     set t_SI=]12;red
@@ -160,12 +165,30 @@ endif
 syntax on
 filetype plugin indent on
 
-" custom highlight should come after calling `syntax on`, otherwize get overrided.
+" fix colorscheme
 hi ColorColumn  ctermbg=yellow
-hi IncSearch    cterm=reverse,bold ctermfg=red guifg=red
-hi LineNr       cterm=reverse,bold ctermfg=gray ctermbg=white gui=reverse,bold guifg=gray guibg=white
-hi Search       cterm=reverse,bold ctermfg=blue ctermbg=white gui=reverse,bold guifg=blue guibg=white
-hi Cursor       gui=reverse,bold guifg=purple guibg=white
+hi IncSearch    cterm=bold ctermbg=red ctermfg=white gui=bold guibg=red guifg=white
+hi LineNr       cterm=bold ctermbg=gray ctermfg=white gui=bold guibg=gray guifg=white
+hi Search       cterm=bold ctermbg=blue ctermfg=white gui=bold guibg=blue guifg=white
+hi Cursor       gui=bold guibg=purple guifg=white
+hi Pmenu        ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
+hi PmenuSel     ctermfg=white ctermbg=blue gui=bold guifg=white guibg=purple
+"hi! link NonText LineNr
 
 "}}}
 
+" diagnostics {{{
+nnoremap <F12>           : setl beval!<CR>
+set bexpr=InspectSynHL()
+fun! InspectSynHL()
+    let l:synNames = []
+    let l:idx = 0
+    for id in synstack(v:beval_lnum, v:beval_col)
+        call add(l:synNames, printf('%s%s', repeat(' ', idx), synIDattr(id, 'name')))
+        let l:idx+=1
+    endfor
+    return join(l:synNames, "\n")
+endfun
+"}}}
+
+" vim:set tw=0 et ts=4 sw=4 sts=4 fdm=marker fdc=1 fdn=1:

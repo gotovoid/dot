@@ -110,6 +110,7 @@ fi
 alias o='nautilus .'
 alias gvim='gvim -f'
 alias hjkl='cd ~/github/hjkl'
+alias emacs='emacs -nw'
 
 export UBUNTU_MENUPROXY=0
 export PYTHONSTARTUP=~/.pystartup.py
