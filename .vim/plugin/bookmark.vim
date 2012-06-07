@@ -82,6 +82,7 @@ fun! NextBookmark(rev)
                 norm 0
                 return
             catch
+                call remove(b:bks, index(b:bks, b:bki))
             endtry
         endif
     endfor

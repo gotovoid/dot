@@ -110,6 +110,7 @@ fi
 alias o='nautilus .'
 alias gvim='gvim -f'
 alias hjkl='cd ~/github/hjkl'
+alias dot='cd ~/github/dot'
 alias emacs='emacs -nw'
 
 export UBUNTU_MENUPROXY=0
