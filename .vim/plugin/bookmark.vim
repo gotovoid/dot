@@ -98,6 +98,14 @@ let s:hl = hlID('LineNr')
 let s:bgt = synIDattr(s:hl, 'bg')
 let s:bgg = synIDattr(s:hl, 'bg#')
 
+if empty(s:bgt) || s:bgt==-1
+    let s:bgt = 'gray'
+endif
+
+if empty(s:bgg) || s:bgg==-1
+    let s:bgg = 'gray'
+endif
+
 exe printf('hi BookmarkSign cterm=bold ctermbg=%s ctermfg=red gui=bold guibg=%s guifg=red', s:bgt, s:bgg)
 sign define Bookmark text=● texthl=BookmarkSign linehl=NONE
 nnoremap <S-F9> :unlet! b:bks b:bkc b:bki b:bkl \| :sign unplace *<CR>

@@ -98,17 +98,6 @@ fun! IncFontSize(inc)
     let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+'.a:inc, '')
 endfun
 
-nmap <C-F9> :sign unplace *<CR>
-nmap <F9> :call ToggleBookmark()<CR>
-sign define TODO text=● texthl=ErrorMsg linehl=NONE
-fun! ToggleBookmark()
-    try
-        sign unplace
-    catch
-        exe 'sign place '.line('.').' name=TODO '.'line='.line('.').' file='.expand('%:p')
-    endtry
-endfun
-
 com! -nargs=1 W echo Weather(<f-args>)
 fun! Weather(city)
     if !has('python')
