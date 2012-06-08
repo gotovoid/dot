@@ -86,18 +86,6 @@ endif
 
 " functions {{{
 
-" Minimal Input Method
-imap <C-e> <ESC>ciw<C-r>=MiniM()<CR>
-fun! MiniM()
-    if !exists('g:dict')
-        let g:dict = {
-                    \   'nihao': '你好',
-                    \   'shijie': '世界'
-                    \}
-    endif
-    return get(g:dict, @", @")
-endfun
-
 " Top ruler
 nnoremap <F6> :call ToggleRuler()<CR>
 fun! ToggleRuler()
@@ -152,7 +140,7 @@ try:
     from urllib import urlencode
     url = 'http://www.google.com/ig/api?' + urlencode({'hl':'zh-cn', 'weather':vim.eval('a:city')})
     xml = ET.XML(unicode(urlopen(url).read() ,'gb2312').encode('utf-8')).find('.//forecast_conditions')
-    if xml is not None:
+    if xml is None:
         raise Exception('city not found!')
     weather = dict((x.tag, x.get('data').encode('utf-8')) for x in xml.getchildren())
     vim.command('return "%s(%s°C~%s°C)"' % (weather['condition'], weather['low'], weather['high']))

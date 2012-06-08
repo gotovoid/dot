@@ -24,7 +24,6 @@ try:
     from urllib import urlencode
     py = vim.eval('@"')
     url = 'http://www.google.com/inputtools/request?' + urlencode({'ime':'pinyin', 'num':'1', 'text':py})
-    print url
     js = json.load(urlopen(url, timeout=3))
     if 'SUCCESS' in js:
         hz = js[1][0][1][0]
@@ -32,7 +31,7 @@ try:
     else:
         raise Exception('not found')
 except Exception as e:
-    vim.command('echomsg "%s"' % e)
+    vim.command('echomsg "MiniM: %s"' % e)
     vim.command('return "%s"' % py)
 _EOF_
 endfun
