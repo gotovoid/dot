@@ -19,7 +19,7 @@
 " b:bkl: (string) bookmark list
 """"""""""""""""""""""""""""""""""""""""""
 
-if &cp || exists('g:bookmark_loaded')
+if &cp || exists('g:bookmark_loaded') || !has('signs')
     finish
 endif
 
