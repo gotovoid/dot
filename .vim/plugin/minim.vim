@@ -15,26 +15,40 @@ endif
 
 let g:minim_loaded = 1
 
-fun! MiniM()
+fun! MiniM(findstart, base)
+    if a:findstart
+        let line = getline('.')
+        let start = col('.') - 1
+        while start > 0 && line[start - 1] =~ '\a'
+            let start -= 1
+        endwhile
+        return start
+    else
+        let res = []
+" python code {{{
 python <<_EOF_
 try:
     import vim
     import json
     from urllib2 import urlopen
     from urllib import urlencode
-    py = vim.eval('@"')
-    url = 'http://www.google.com/inputtools/request?' + urlencode({'ime':'pinyin', 'num':'1', 'text':py})
+    py = vim.eval('a:base')
+    url = 'http://www.google.com/inputtools/request?' + urlencode({'ime':'pinyin', 'num':'5', 'text':py})
     js = json.load(urlopen(url, timeout=3))
     if 'SUCCESS' in js:
-        hz = js[1][0][1][0]
-        vim.command('return "%s"' % hz.encode('utf8'))
+        words = ['"{0}"'.format(i.encode('utf8')) for i in js[1][0][1]]
+        vim.command('let res = [%s]' % ','.join(words))
     else:
         raise Exception('not found')
 except Exception as e:
+    raise
     vim.command('echomsg "MiniM: %s"' % e)
-    vim.command('return "%s"' % py)
 _EOF_
+" }}}
+        return res
+    endif
 endfun
 
-" type <C-space> to expand pinyin to hanzi
-inoremap <buffer> <C-space> <ESC>ciw<C-r>=MiniM()<CR>
+set completefunc=MiniM
+
+" vim:set et fdm=marker fdc=1:

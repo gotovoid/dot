@@ -65,6 +65,7 @@ nnoremap <leader><space> : NERDTreeToggle<CR>
 nnoremap <leader><enter> : NERDTreeToggle<CR>
 inoremap <C-d>           <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 inoremap <C-t>           <C-r>=strftime('%H:%M:%S')<CR>
+inoremap <C-space>       <C-x><C-u>
 "}}}
 
 " commands {{{
