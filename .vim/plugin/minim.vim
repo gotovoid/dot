@@ -41,7 +41,6 @@ try:
     else:
         raise Exception('not found')
 except Exception as e:
-    raise
     vim.command('echomsg "MiniM: %s"' % e)
 _EOF_
 " }}}
