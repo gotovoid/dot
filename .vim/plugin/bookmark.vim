@@ -103,7 +103,7 @@ if empty(s:bgt) || s:bgt==-1
     let s:bgt = 'gray'
 endif
 
-if empty(s:bgg) || s:bgg==-1
+if empty(s:bgg) || s:bgg!~'^#'
     let s:bgg = 'gray'
 endif
 
