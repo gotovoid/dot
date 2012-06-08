@@ -17,6 +17,8 @@ set fencs=utf-8,chinese,latin1 fenc=utf-8 enc=utf-8
 set foldnestmax=2
 " don't auto wrap long text
 "set formatoptions=mnoq
+" mbyte support when <gq>
+set formatoptions+=m
 " gVim will load `$VIM/vimrc` before loading `~/.vimrc`,
 " add `finish` at the beginning of `$VIM/vimrc` to hide `Menu`,
 " because `$VIM/vimrc` calls `syntax on` which will build menu!
@@ -83,6 +85,43 @@ endif
 "}}}
 
 " functions {{{
+
+" Minimal Input Method
+imap <C-e> <ESC>ciw<C-r>=MiniM()<CR>
+fun! MiniM()
+    if !exists('g:dict')
+        let g:dict = {
+                    \   'nihao': '你好',
+                    \   'shijie': '世界'
+                    \}
+    endif
+    return get(g:dict, @", @")
+endfun
+
+" Top ruler
+nnoremap <F6> :call ToggleRuler()<CR>
+fun! ToggleRuler()
+    if has('gui_running')
+        return
+    endif
+
+    if !exists('g:ruler')
+        let g:ruler = 0
+    endif
+
+    let g:ruler = !g:ruler
+    if g:ruler
+        set showtabline=2 
+        let l:padding = &nu*&nuw+&fdc
+        let &tabline=printf('%*.*s%s', l:padding, l:padding, '0',
+                    \repeat('%#TabLine#123456789%#TabLineFill#0', &columns/10))
+    else
+        set showtabline&
+        set tabline&
+    endif
+endfun
+
+" Zoom in/out
 nnoremap <C-kPlus>     : call IncFontSize(+1)<CR>
 nnoremap <C-kMinus>    : call IncFontSize(-1)<CR>
 nnoremap <C-k0>        : call IncFontSize(0)<CR>
@@ -98,6 +137,7 @@ fun! IncFontSize(inc)
     let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+'.a:inc, '')
 endfun
 
+" Weather report
 com! -nargs=1 W echo Weather(<f-args>)
 fun! Weather(city)
     if !has('python')
@@ -130,8 +170,8 @@ let g:vimwiki_menu=0
 let g:vimwiki_folding=0
 let g:vimwiki_html_header_numbering=2
 let g:vimwiki_html_header_numbering_sym='.'
-"let g:vimwiki_list = [{'path': '~/vimwiki/',
-"               \ 'path_html': '~/github/hjkl/posts/'}]
+let g:vimwiki_list = [{'path': '~/github/hjkl/_posts', 
+                   \ 'syntax': 'markdown', 'ext': '.md'}]
 "}}}
 
 " syntaxs {{{
