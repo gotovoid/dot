@@ -1,11 +1,13 @@
 "
 " Truly understand ~/.vimrc!
 " Owner:    Kev++
-" Updated:  2012-06-07 10:30:20
+" Updated:  2012-06-10 10:51:09
 "
 
 " options {{{
-set nocompatible nolinebreak nowrap nocursorline
+" If `$VIM/vimrc` didn't `set cp`, we don't need to `set nocp` here. Please read the manual!
+set nocompatible
+set nolinebreak nowrap nocursorline
 set autoindent smartindent
 set autoread
 set backspace=indent,eol,start
@@ -25,10 +27,13 @@ set formatoptions+=m
 set guioptions+=aM guioptions-=T
 set guitablabel=(%N)\ %t\ %M
 set hidden
+set history=50
 set hlsearch incsearch
+set ignorecase smartcase
 set isfname-==
 set laststatus=2
 set listchars=precedes:«,extends:»,tab:▸·,trail:∙,eol:¶
+set modeline
 set mouse=a
 set number numberwidth=4 showbreak=\ \ \ ↳ cpo+=n
 set pastetoggle=<F7>
