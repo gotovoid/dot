@@ -6,7 +6,8 @@
 " Version:  1.0
 " License:  GPL3
 """""""""""""""""""""""""""""""""""""""""""
-" Warning:  Google will get everything!
+" Warning:  Don't use it if you don't trust
+"           Google!
 """""""""""""""""""""""""""""""""""""""""""
 
 if &cp || exists('g:minim_loaded') || !has('python')
@@ -14,6 +15,8 @@ if &cp || exists('g:minim_loaded') || !has('python')
 endif
 
 let g:minim_loaded = 1
+let s:save_cpo = &cpo
+set cpo&vim
 
 fun! MiniM(findstart, base)
     if a:findstart
@@ -49,5 +52,6 @@ _EOF_
 endfun
 
 set completefunc=MiniM
+let &cpo = s:save_cpo
 
 " vim:set et fdm=marker fdc=1:

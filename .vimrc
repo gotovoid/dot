@@ -1,11 +1,12 @@
 "
 " Truly understand ~/.vimrc!
 " Owner:    Kev++
-" Updated:  2012-06-10 10:51:09
+" Updated:  2012-06-15 14:24:48
 "
 
 " options {{{
-" If `$VIM/vimrc` didn't `set cp`, we don't need to `set nocp` here. Please read the manual!
+" If `$VIM/vimrc` didn't `set cp`, we don't need to `set nocp` here.
+" Please read the manual!
 set nocompatible
 set nolinebreak nowrap nocursorline
 set autoindent smartindent
@@ -36,7 +37,7 @@ set listchars=precedes:«,extends:»,tab:▸·,trail:∙,eol:¶
 set modeline
 set mouse=a
 set number numberwidth=4 showbreak=\ \ \ ↳ cpo+=n
-set pastetoggle=<F7>
+"set pastetoggle=<F7>
 set ruler
 set shiftwidth=4 tabstop=4 softtabstop=4 expandtab
 set showcmd
@@ -47,6 +48,7 @@ set splitright splitbelow
 set tabpagemax=50
 set tags=./tags;/,~/.vim/tags path=.,/usr/local/include,/usr/include
 set timeoutlen=500
+set titlestring=%F\ %M
 set virtualedit=block
 set wrapscan
 set wildignore=*.swp,*.bak,*.pyc,*~
@@ -55,7 +57,8 @@ set wildmenu
 "}}}
 
 " mappings {{{
-let mapleader = ","
+let mapleader = ','
+" normal mode
 nnoremap <C-l>           gt
 nnoremap <C-h>           gT
 nnoremap <C-j>           <C-e>
@@ -65,12 +68,20 @@ nnoremap <leader>v       : tabe $MYVIMRC<CR>
 nnoremap <leader>t       : tabe<CR>
 nnoremap <leader>q       : q<CR>
 nnoremap <leader>f       : !firefox %<CR>
+nnoremap <leader>z       : setl fdm=indent fdc=1 fdn=1<CR>
 nnoremap <backspace>     : noh<CR>
 nnoremap <leader><space> : NERDTreeToggle<CR>
 nnoremap <leader><enter> : NERDTreeToggle<CR>
-inoremap <C-d>           <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
-inoremap <C-t>           <C-r>=strftime('%H:%M:%S')<CR>
+" insert mode
+inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
+inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
+inoremap <leader>fn      <C-r>=expand('%:p')<CR>
 inoremap <C-space>       <C-x><C-u>
+inoremap <C-a>           <C-o>^
+inoremap <C-e>           <C-o>$
+inoremap <C-b>           <left>
+inoremap <C-f>           <right>
+inoremap <C-d>           <del>
 "}}}
 
 " commands {{{
@@ -116,20 +127,20 @@ fun! ToggleRuler()
 endfun
 
 " Zoom in/out
-nnoremap <C-kPlus>     : call IncFontSize(+1)<CR>
-nnoremap <C-kMinus>    : call IncFontSize(-1)<CR>
-nnoremap <C-k0>        : call IncFontSize(0)<CR>
-fun! IncFontSize(inc)
-    if !exists('+guifont')
-        return
-    endif
-    let s:defaultfont = 'Ubuntu Mono 12'
-    if a:inc==0 || empty(&guifont)
-        let &guifont = s:defaultfont
-        return
-    endif
-    let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+'.a:inc, '')
-endfun
+" nnoremap <C-kPlus>     : call IncFontSize(+1)<CR>
+" nnoremap <C-kMinus>    : call IncFontSize(-1)<CR>
+" nnoremap <C-k0>        : call IncFontSize(0)<CR>
+" fun! IncFontSize(inc)
+"     if !exists('+guifont')
+"         return
+"     endif
+"     let s:defaultfont = 'Ubuntu Mono 12'
+"     if a:inc==0 || empty(&guifont)
+"         let &guifont = s:defaultfont
+"         return
+"     endif
+"     let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+'.a:inc, '')
+" endfun
 
 " Weather report
 com! -nargs=1 W echo Weather(<f-args>)
@@ -184,14 +195,14 @@ endif
 
 " `:syntax on` will call `:filetype on`,
 " if you don't need plugin/indent, `:filetype on` is not required.
-" type `:syntax-loading` to read more
+" type `:help syntax-loading` to read more
 syntax on
 filetype plugin indent on
 
 " fix colorscheme
 hi ColorColumn  ctermbg=yellow
 hi IncSearch    cterm=bold ctermbg=red ctermfg=white gui=bold guibg=red guifg=white
-hi LineNr       cterm=bold ctermbg=gray ctermfg=white gui=bold guibg=gray guifg=white
+hi LineNr       cterm=bold ctermbg=gray ctermfg=black gui=bold guibg=gray guifg=white
 hi Search       cterm=bold ctermbg=blue ctermfg=white gui=bold guibg=blue guifg=white
 hi Cursor       gui=bold guibg=purple guifg=white
 hi Pmenu        ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
@@ -201,8 +212,10 @@ hi PmenuSel     ctermfg=white ctermbg=blue gui=bold guifg=white guibg=purple
 "}}}
 
 " diagnostics {{{
-nnoremap <F12>           : setl beval!<CR>
-set bexpr=InspectSynHL()
+if has('balloon_eval')
+    nnoremap <F12>           : setl beval!<CR>
+    set bexpr=InspectSynHL()
+endif
 fun! InspectSynHL()
     let l:synNames = []
     let l:idx = 0
