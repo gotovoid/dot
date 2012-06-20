@@ -63,6 +63,10 @@ nnoremap <C-l>           gt
 nnoremap <C-h>           gT
 nnoremap <C-j>           <C-e>
 nnoremap <C-k>           <C-y>
+nnoremap <leader>h       : wincmd h<CR>
+nnoremap <leader>j       : wincmd j<CR>
+nnoremap <leader>k       : wincmd k<CR>
+nnoremap <leader>l       : wincmd l<CR>
 nnoremap <leader>s       : so $MYVIMRC<CR>
 nnoremap <leader>v       : tabe $MYVIMRC<CR>
 nnoremap <leader>t       : tabe<CR>
@@ -76,12 +80,13 @@ nnoremap <leader><enter> : NERDTreeToggle<CR>
 inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
 inoremap <leader>fn      <C-r>=expand('%:p')<CR>
-inoremap <C-space>       <C-x><C-u>
+inoremap <C-@>           <C-x><C-u>
 inoremap <C-a>           <C-o>^
 inoremap <C-e>           <C-o>$
 inoremap <C-b>           <left>
 inoremap <C-f>           <right>
 inoremap <C-d>           <del>
+inoremap <C-f>           <ESC>:.!figlet<CR>a
 "}}}
 
 " commands {{{
@@ -96,8 +101,10 @@ com! -nargs=* T :VimwikiTable <args>
 if has('autocmd')
     au FileType text setl spell
     au FileType help setl number nospell
-    au FileType html setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
+    "au FileType html setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
+    au BufRead,BufNew *.wiki setf vimwiki
     au FileType *    setl textwidth=0
+    au QuickFixCmdPost *grep* cwindow
 endif
 "}}}
 
@@ -127,20 +134,20 @@ fun! ToggleRuler()
 endfun
 
 " Zoom in/out
-" nnoremap <C-kPlus>     : call IncFontSize(+1)<CR>
-" nnoremap <C-kMinus>    : call IncFontSize(-1)<CR>
-" nnoremap <C-k0>        : call IncFontSize(0)<CR>
-" fun! IncFontSize(inc)
-"     if !exists('+guifont')
-"         return
-"     endif
-"     let s:defaultfont = 'Ubuntu Mono 12'
-"     if a:inc==0 || empty(&guifont)
-"         let &guifont = s:defaultfont
-"         return
-"     endif
-"     let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+'.a:inc, '')
-" endfun
+nnoremap <C-kPlus>     : call IncFontSize(+1)<CR>
+nnoremap <C-kMinus>    : call IncFontSize(-1)<CR>
+nnoremap <C-k0>        : call IncFontSize(0)<CR>
+fun! IncFontSize(inc)
+    if !exists('+guifont')
+        return
+    endif
+    let s:defaultfont = 'Ubuntu Mono 12'
+    if a:inc==0 || empty(&guifont)
+        let &guifont = s:defaultfont
+        return
+    endif
+    let &guifont = substitute(&guifont, '\d\+$', '\=submatch(0)+'.a:inc, '')
+endfun
 
 " Weather report
 com! -nargs=1 W echo Weather(<f-args>)
@@ -169,12 +176,21 @@ endfun
 
 " plugins {{{
 call pathogen#infect()
+
+let g:CommandTCancelMap = '<esc>'
+cnoremap <C-t> :CommandT<CR>
+
 let g:Powerline_symbols = 'fancy'
-let g:solarized_menu=0
-let g:vimwiki_menu=0
-let g:vimwiki_folding=0
-let g:vimwiki_html_header_numbering=2
-let g:vimwiki_html_header_numbering_sym='.'
+
+let g:solarized_menu = 0
+
+let g:yankring_default_menu_mode = 0
+nnoremap <C-y> :YRShow<CR>
+
+let g:vimwiki_menu = 0
+let g:vimwiki_folding = 0
+let g:vimwiki_html_header_numbering = 2
+let g:vimwiki_html_header_numbering_sym = '.'
 let g:vimwiki_list = [{'path': '~/github/hjkl/_posts', 
                    \ 'syntax': 'markdown', 'ext': '.md'}]
 "}}}
@@ -225,6 +241,10 @@ fun! InspectSynHL()
     endfor
     return join(l:synNames, "\n")
 endfun
+
+if has('gui_running')
+    set guifont=Ubuntu\ Mono\ 16
+endif
 "}}}
 
 " vim:set tw=0 et ts=4 sw=4 sts=4 fdm=marker fdc=1 fdn=1:
