@@ -115,12 +115,17 @@ alias emacs='emacs -nw'
 
 export UBUNTU_MENUPROXY=0
 export PYTHONSTARTUP=~/.pystartup.py
-export PS1='\w $ '
+export PS1='\w \e[32m$(git_br)\e[0m$ '
 PATH=$PATH:~/bin
 
 bind -x '"\ed":"date +%F\ %T"'
 bind '"\C-q":"\"\"\C-b"'
 stty start undef
+
+# git
+git_br() {
+    git branch 2>/dev/null | sed -rn 's/^\* (.*)/(\1) /p'
+}
 
 # bold font
 bold() {
@@ -161,7 +166,6 @@ so() {
 vish() {
     vim ~/.bashrc
 }
-
 
 # export function
 typeset -fx print bold sw

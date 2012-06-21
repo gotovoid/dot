@@ -81,6 +81,7 @@ inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
 inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
 inoremap <leader>fn      <C-r>=expand('%:p')<CR>
 inoremap <C-@>           <C-x><C-u>
+inoremap <C-space>       <C-x><C-u>
 inoremap <C-a>           <C-o>^
 inoremap <C-e>           <C-o>$
 inoremap <C-b>           <left>
