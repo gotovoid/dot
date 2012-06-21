@@ -115,7 +115,7 @@ alias emacs='emacs -nw'
 
 export UBUNTU_MENUPROXY=0
 export PYTHONSTARTUP=~/.pystartup.py
-export PS1='\w \e[32m$(git_br)\e[0m$ '
+export PS1='\e[34m\w \e[32m$(git_br)\e[37m$\e[0m '
 PATH=$PATH:~/bin
 
 bind -x '"\ed":"date +%F\ %T"'
