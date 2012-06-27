@@ -68,9 +68,11 @@ fun! TOC()
     call setloclist(0, [])
     let save_cursor = getpos(".")
     call cursor(1, 1)
-    while search("^#", 'W') > 0
-       let msg = printf('%s:%d:%s', expand('%'), line('.'), substitute(getline('.'), '#', '»', 'g'))
-       laddexpr msg
+    let flag = 'cW'
+    while search("^#", flag) > 0
+        let flag = 'W'
+        let msg = printf('%s:%d:%s', expand('%'), line('.'), substitute(getline('.'), '#', '»', 'g'))
+        laddexpr msg
     endwhile
     call setpos('.', save_cursor)
     silent! call ToggleLocationList()

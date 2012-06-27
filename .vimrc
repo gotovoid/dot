@@ -59,6 +59,7 @@ set wildmenu
 " mappings {{{
 let mapleader = ','
 " normal mode
+nnoremap <F5>            : redraw!<CR>
 nnoremap <C-l>           gt
 nnoremap <C-h>           gT
 nnoremap <C-j>           <C-e>
@@ -77,7 +78,7 @@ nnoremap <backspace>     : noh<CR>
 nnoremap <leader><space> : NERDTreeToggle<CR>
 nnoremap <leader><enter> : NERDTreeToggle<CR>
 " insert mode
-inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d %H:%M:%S')<CR>
+inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d')<CR>
 inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
 inoremap <leader>fn      <C-r>=expand('%:p')<CR>
 inoremap <C-@>           <C-x><C-u>
@@ -88,24 +89,28 @@ inoremap <C-b>           <left>
 inoremap <C-f>           <right>
 inoremap <C-d>           <del>
 inoremap <C-f>           <ESC>:.!figlet<CR>a
+inoremap <C-t>           <ESC>:.!toilet -f future<CR>a
 "}}}
 
 " commands {{{
-com! HJKL :lcd ~/github/hjkl
-com! HT :helptags ~/.vim/doc
-com! CD :lcd %:h
+com! HJKL                      :lcd ~/github/hjkl
+com! HT                        :helptags ~/.vim/doc
+com! CD                        :lcd %:h
+com! TAB                       :tab ball
 com! -nargs=1 -complete=help H :tab help <args>
-com! -nargs=* T :VimwikiTable <args>
+com! -nargs=* T                :VimwikiTable <args>
 "}}}
 
 " autocmds {{{
 if has('autocmd')
-    au FileType text setl spell
-    au FileType help setl number nospell
-    "au FileType html setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
-    au BufRead,BufNew *.wiki setf vimwiki
-    au FileType *    setl textwidth=0
-    au QuickFixCmdPost *grep* cwindow
+    au FileType text            setl spell
+    au FileType help            setl number nospell
+    au FileType *               setl textwidth=0
+    au QuickFixCmdPost *grep*   cwindow
+    au FileType markdown        let &l:makeprg = 'pandoc -o %:r.html %'
+    au FileType markdown        nnoremap <buffer> <F5> :write \| silent make \| redraw!<CR>
+   "au FileType html            setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
+    au BufNewFile,BufRead */_posts/*.md syntax match Comment /\%^---\_.\{-}---$/
 endif
 "}}}
 
@@ -188,12 +193,31 @@ let g:solarized_menu = 0
 let g:yankring_default_menu_mode = 0
 nnoremap <C-y> :YRShow<CR>
 
+let g:alternateExtensions_html = 'md,markdown'
+let g:alternateExtensions_md = 'html'
+let g:alternateExtensions_markdown = 'html'
+
+let g:vimwiki_list = [
+                        \{
+                            \'template_path': '~/vimwiki/templates/',
+                            \'template_ext': '.html',
+                            \'template_default': 'default',
+                            \'nested_syntaxes': {'python': 'python', 'bash': 'sh'}
+                        \},
+                        \{
+                            \'path': '~/github/hjkl/_posts/',
+                            \'syntax': 'markdown', 'ext': '.md'
+                        \}
+                    \]
 let g:vimwiki_menu = 0
 let g:vimwiki_folding = 0
-let g:vimwiki_html_header_numbering = 2
+let g:vimwiki_auto_checkbox = 1
+let g:vimwiki_hl_cb_checked = 1
+let g:vimwiki_CJK_length = 1
+let g:vimwiki_valid_html_tags = 'b,i,s,u,sub,sup,kbd,br,hr,table,tr,td'
+let g:vimwiki_html_header_numbering = 1
 let g:vimwiki_html_header_numbering_sym = '.'
-let g:vimwiki_list = [{'path': '~/github/hjkl/_posts', 
-                   \ 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_listsyms = ' ¼½¾✓'
 "}}}
 
 " syntaxs {{{
@@ -224,6 +248,11 @@ hi Search       cterm=bold ctermbg=blue ctermfg=white gui=bold guibg=blue guifg=
 hi Cursor       gui=bold guibg=purple guifg=white
 hi Pmenu        ctermfg=white ctermbg=black gui=NONE guifg=white guibg=black
 hi PmenuSel     ctermfg=white ctermbg=blue gui=bold guifg=white guibg=purple
+hi DiffText     ctermfg=white guibg=red guifg=white
+hi DiffChange   guibg=pink
+hi DiffDelete   gui=NONE guibg=cyan guifg=cyan
+hi DiffAdd      guibg=lightblue
+hi DiffAdded    gui=NONE
 "hi! link NonText LineNr
 
 "}}}
@@ -242,6 +271,11 @@ fun! InspectSynHL()
     endfor
     return join(l:synNames, "\n")
 endfun
+
+nnoremap <C-m> !!markdown<CR>
+vnoremap <C-m> !markdown<CR>
+nnoremap <C-p> !!pandoc<CR>
+vnoremap <C-p> !pandoc<CR>
 
 if has('gui_running')
     set guifont=Ubuntu\ Mono\ 16

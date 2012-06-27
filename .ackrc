@@ -1,1 +1,3 @@
---type-set=vim=.vim,.vi
+# .ackrc for ack
+--type-add=vim=.vi
+--type-set=wiki=.wiki

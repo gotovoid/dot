@@ -112,14 +112,15 @@ alias gvim='gvim -f'
 alias hjkl='cd ~/github/hjkl'
 alias dot='cd ~/github/dot'
 alias emacs='emacs -nw'
+alias deflate='python -c "import sys; sys.stdout.write(sys.stdin.read().decode(\"zlib\"))"'
 
 export UBUNTU_MENUPROXY=0
 export PYTHONSTARTUP=~/.pystartup.py
-export PS1='\e[34m\w \e[32m$(git_br)\e[37m$\e[0m '
+export PS1='\w $(git_br)$ '
 PATH=$PATH:~/bin
 
-bind -x '"\ed":"date +%F\ %T"'
-bind '"\C-q":"\"\"\C-b"'
+#bind -x '"\ed":"date +%F\ %T"'
+#bind '"\C-q":"\"\"\C-b"'
 stty start undef
 
 # git
@@ -204,3 +205,4 @@ on()    { tmux kill-pane -a; }
 typeset -fx tab{,c,e,f,n,p,s} {,v}sp qa on clock
 
 shopt -s cdspell
+shopt -s globstar
