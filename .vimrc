@@ -12,6 +12,7 @@ set nolinebreak nowrap nocursorline
 set autoindent smartindent
 set autoread
 set backspace=indent,eol,start
+set cedit=<C-x>
 set clipboard=unnamedplus
 set colorcolumn=100
 set complete+=kspell
@@ -49,6 +50,7 @@ set tabpagemax=50
 set tags=./tags;/,~/.vim/tags path=.,/usr/local/include,/usr/include
 set timeoutlen=500
 set titlestring=%F\ %M
+set undofile
 set virtualedit=block
 set wrapscan
 set wildignore=*.swp,*.bak,*.pyc,*~
@@ -64,10 +66,13 @@ nnoremap <C-l>           gt
 nnoremap <C-h>           gT
 nnoremap <C-j>           <C-e>
 nnoremap <C-k>           <C-y>
+nnoremap <leader>=       yypVr=
+nnoremap <leader>-       yypVr-
 nnoremap <leader>h       : wincmd h<CR>
 nnoremap <leader>j       : wincmd j<CR>
 nnoremap <leader>k       : wincmd k<CR>
 nnoremap <leader>l       : wincmd l<CR>
+nnoremap <leader>p       : wincmd p<CR>
 nnoremap <leader>s       : so $MYVIMRC<CR>
 nnoremap <leader>v       : tabe $MYVIMRC<CR>
 nnoremap <leader>t       : tabe<CR>
@@ -83,13 +88,29 @@ inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
 inoremap <leader>fn      <C-r>=expand('%:p')<CR>
 inoremap <C-@>           <C-x><C-u>
 inoremap <C-space>       <C-x><C-u>
-inoremap <C-a>           <C-o>^
-inoremap <C-e>           <C-o>$
+inoremap <C-a>           <home>
+inoremap <C-e>           <end>
 inoremap <C-b>           <left>
 inoremap <C-f>           <right>
+inoremap <A-b>           <S-left>
+inoremap <A-f>           <S-right>
 inoremap <C-d>           <del>
-inoremap <C-f>           <ESC>:.!figlet<CR>a
-inoremap <C-t>           <ESC>:.!toilet -f future<CR>a
+inoremap <A-d>           <C-o>dw
+" command mode
+cnoremap <C-a>           <home>
+cnoremap <C-e>           <end>
+cnoremap <C-b>           <left>
+cnoremap <C-f>           <right>
+cnoremap <A-b>           <S-left>
+cnoremap <A-f>           <S-right>
+cnoremap <C-p>           <up>
+cnoremap <C-n>           <down>
+cnoremap <C-d>           <delete>
+" visual mode
+vnoremap <C-m>           !markdown<CR>
+vnoremap <C-p>           !pandoc<CR>
+vnoremap <C-f>           !figlet<CR>
+vnoremap <C-t>           !toilet -f future<CR>
 "}}}
 
 " commands {{{
@@ -99,6 +120,7 @@ com! CD                        :lcd %:h
 com! TAB                       :tab ball
 com! -nargs=1 -complete=help H :tab help <args>
 com! -nargs=* T                :VimwikiTable <args>
+com! -bar MK                   :silent! make! | redraw!
 "}}}
 
 " autocmds {{{
@@ -111,10 +133,47 @@ if has('autocmd')
     au FileType markdown        nnoremap <buffer> <F5> :write \| silent make \| redraw!<CR>
    "au FileType html            setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
     au BufNewFile,BufRead */_posts/*.md syntax match Comment /\%^---\_.\{-}---$/
+
+    au BufNewFile,BufRead *.coffee      setf coffee.python
+    au BufWritePost *.coffee            silent! make! | copen | redraw!
+    au FileType coffee.python           setl makeprg=coffee\ -c\ %
+    au FileType coffee.python           setl errorformat=Error:\ In\ %f\\,\ %m\ on\ line\ %l,
+                                                       \Error:\ In\ %f\\,\ Parse\ error\ on\ line\ %l:\ %m,
+                                                       \SyntaxError:\ In\ %f\\,\ %m,
+                                                       \%-G%.%#
+
+    aug img
+      au!
+      au BufReadPost,FileReadPost *.jpg,*.png set bt=nofile
+      au BufReadPost,FileReadPost *.jpg,*.png '[,']!convert - jpg:- | jp2a -
+    aug END
 endif
 "}}}
 
 " functions {{{
+
+com! -bar -nargs=0 ClearUndo call <SID>ClearUndo()
+fun! <SID>ClearUndo()
+    let saved_ul = &undolevels
+    set ul=-1
+    exe "normal a \<BS>\<Esc>"
+    let &ul = saved_ul
+    unlet saved_ul
+endfun
+
+" Watch coffee compiling
+"com! -bar -bang Watch call Watch("<bang>")
+fun! Watch(bang)
+    if empty(a:bang)
+        setl ar
+        aug watch
+            au!
+            au BufWritePost *.coffee sleep 100m | checktime
+        aug END
+    else
+        aug! watch
+    endif
+endfun
 
 " Top ruler
 nnoremap <F6> :call ToggleRuler()<CR>
@@ -190,12 +249,17 @@ let g:Powerline_symbols = 'fancy'
 
 let g:solarized_menu = 0
 
+
 let g:yankring_default_menu_mode = 0
 nnoremap <C-y> :YRShow<CR>
+
+nnoremap <C-u> :GundoToggle \| wincmd l<CR>
 
 let g:alternateExtensions_html = 'md,markdown'
 let g:alternateExtensions_md = 'html'
 let g:alternateExtensions_markdown = 'html'
+let g:alternateExtensions_coffee = 'js'
+let g:alternateExtensions_js = 'coffee'
 
 let g:vimwiki_list = [
                         \{
@@ -271,11 +335,6 @@ fun! InspectSynHL()
     endfor
     return join(l:synNames, "\n")
 endfun
-
-nnoremap <C-m> !!markdown<CR>
-vnoremap <C-m> !markdown<CR>
-nnoremap <C-p> !!pandoc<CR>
-vnoremap <C-p> !pandoc<CR>
 
 if has('gui_running')
     set guifont=Ubuntu\ Mono\ 16

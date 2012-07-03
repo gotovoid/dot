@@ -119,6 +119,8 @@ export PYTHONSTARTUP=~/.pystartup.py
 export PS1='\w $(git_br)$ '
 PATH=$PATH:~/bin
 
+#source ~/.git-completion.sh
+
 #bind -x '"\ed":"date +%F\ %T"'
 #bind '"\C-q":"\"\"\C-b"'
 stty start undef
