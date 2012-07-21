@@ -112,7 +112,9 @@ alias gvim='gvim -f'
 alias hjkl='cd ~/github/hjkl'
 alias dot='cd ~/github/dot'
 alias emacs='emacs -nw'
+alias tmux='tmux -2'
 alias deflate='python -c "import sys; sys.stdout.write(sys.stdin.read().decode(\"zlib\"))"'
+alias golf="vim -Nu NONE +'set ls=2 stl=http://hjkl.me'"
 
 export UBUNTU_MENUPROXY=0
 export PYTHONSTARTUP=~/.pystartup.py

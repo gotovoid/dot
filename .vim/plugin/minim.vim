@@ -51,7 +51,7 @@ _EOF_
     endif
 endfun
 
-set completefunc=MiniM
+"set completefunc=MiniM
 let &cpo = s:save_cpo
 
 " vim:set et fdm=marker fdc=1:

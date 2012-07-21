@@ -15,8 +15,9 @@ set backspace=indent,eol,start
 set cedit=<C-x>
 set clipboard=unnamedplus
 set colorcolumn=100
-set complete+=kspell
+set completefunc=
 set cryptmethod=blowfish
+set dictionary=/usr/lib/firefox/dictionaries/en_US.dic
 set fencs=utf-8,chinese,latin1 fenc=utf-8 enc=utf-8
 set foldnestmax=2
 " don't auto wrap long text
@@ -32,22 +33,25 @@ set hidden
 set history=50
 set hlsearch incsearch
 set ignorecase smartcase
-set isfname-==
+set isfname-== isfname-=,
 set laststatus=2
-set listchars=precedes:«,extends:»,tab:▸·,trail:∙,eol:¶
+set listchars=precedes:«,extends:»,tab:▸―,trail:∙,eol:¶
 set modeline
 set mouse=a
 set number numberwidth=4 showbreak=\ \ \ ↳ cpo+=n
 "set pastetoggle=<F7>
+set path=.,/usr/local/include/*,/usr/include/**1
 set ruler
-set shiftwidth=4 tabstop=4 softtabstop=4 expandtab
+set selectmode=key keymodel=startsel
 set showcmd
 set showmatch matchpairs+=<:> matchtime=2
 set sidescroll=1 sidescrolloff=1
 set spelllang=en
 set splitright splitbelow
 set tabpagemax=50
-set tags=./tags;/,~/.vim/tags path=.,/usr/local/include,/usr/include
+set tabstop=8 softtabstop=4 shiftwidth=4 expandtab
+set tags=./tags;/,~/.vim/tags
+set thesaurus=~/.vim/tsr.txt
 set timeoutlen=500
 set titlestring=%F\ %M
 set undofile
@@ -61,13 +65,12 @@ set wildmenu
 " mappings {{{
 let mapleader = ','
 " normal mode
-nnoremap <F5>            : redraw!<CR>
+nnoremap <F5>            : noh \| redraw!<CR>
 nnoremap <C-l>           gt
 nnoremap <C-h>           gT
 nnoremap <C-j>           <C-e>
 nnoremap <C-k>           <C-y>
-nnoremap <leader>=       yypVr=
-nnoremap <leader>-       yypVr-
+nnoremap <leader>w       <C-w>
 nnoremap <leader>h       : wincmd h<CR>
 nnoremap <leader>j       : wincmd j<CR>
 nnoremap <leader>k       : wincmd k<CR>
@@ -76,16 +79,19 @@ nnoremap <leader>p       : wincmd p<CR>
 nnoremap <leader>s       : so $MYVIMRC<CR>
 nnoremap <leader>v       : tabe $MYVIMRC<CR>
 nnoremap <leader>t       : tabe<CR>
+nnoremap <leader>o       : tabo<CR>
 nnoremap <leader>q       : q<CR>
 nnoremap <leader>f       : !firefox %<CR>
 nnoremap <leader>z       : setl fdm=indent fdc=1 fdn=1<CR>
-nnoremap <backspace>     : noh<CR>
+nnoremap <leader>;       : noh<CR>
 nnoremap <leader><space> : NERDTreeToggle<CR>
 nnoremap <leader><enter> : NERDTreeToggle<CR>
 " insert mode
+inoremap <leader>co      © Kev++ <http://hjkl.me>
 inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d')<CR>
 inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
 inoremap <leader>fn      <C-r>=expand('%:p')<CR>
+inoremap <C-t>           <esc>!!toilet -f future<CR>
 inoremap <C-@>           <C-x><C-u>
 inoremap <C-space>       <C-x><C-u>
 inoremap <C-a>           <home>
@@ -124,33 +130,100 @@ com! -bar MK                   :silent! make! | redraw!
 "}}}
 
 " autocmds {{{
-if has('autocmd')
-    au FileType text            setl spell
-    au FileType help            setl number nospell
-    au FileType *               setl textwidth=0
+aug XXX
+    au!
     au QuickFixCmdPost *grep*   cwindow
+    au FileType *               setl textwidth=0
+    au FileType text            setl spell dictionary= complete+=kspell completefunc=MiniM
+    au FileType help            setl number nospell
     au FileType markdown        let &l:makeprg = 'pandoc -o %:r.html %'
     au FileType markdown        nnoremap <buffer> <F5> :write \| silent make \| redraw!<CR>
+    au FileType coffee.python   setl makeprg=coffee\ -c\ %
+    au FileType coffee.python   setl errorformat=Error:\ In\ %f\\,\ %m\ on\ line\ %l,
+                                               \Error:\ In\ %f\\,\ Parse\ error\ on\ line\ %l:\ %m,
+                                               \SyntaxError:\ In\ %f\\,\ %m,
+                                               \%-G%.%#
    "au FileType html            setl equalprg=tidy\ -q\ -i\ --indent-spaces\ 4\ --doctype\ omit\ --tidy-mark\ 0\ --show-errors\ 0\|\|true
     au BufNewFile,BufRead */_posts/*.md syntax match Comment /\%^---\_.\{-}---$/
-
     au BufNewFile,BufRead *.coffee      setf coffee.python
     au BufWritePost *.coffee            silent! make! | copen | redraw!
-    au FileType coffee.python           setl makeprg=coffee\ -c\ %
-    au FileType coffee.python           setl errorformat=Error:\ In\ %f\\,\ %m\ on\ line\ %l,
-                                                       \Error:\ In\ %f\\,\ Parse\ error\ on\ line\ %l:\ %m,
-                                                       \SyntaxError:\ In\ %f\\,\ %m,
-                                                       \%-G%.%#
+aug END
 
-    aug img
-      au!
-      au BufReadPost,FileReadPost *.jpg,*.png set bt=nofile
-      au BufReadPost,FileReadPost *.jpg,*.png '[,']!convert - jpg:- | jp2a -
-    aug END
-endif
+aug IMG
+  au!
+  au BufReadPost,FileReadPost *.jpg,*.png set bt=nofile
+  au BufReadPost,FileReadPost *.jpg,*.png '[,']!convert - jpg:- | jp2a -
+aug END
 "}}}
 
 " functions {{{
+nnoremap vii :call SelectIdenticalLines()<CR>
+fun! SelectIdenticalLines()
+    let s = getline('.')
+    let n = line('.')
+    let i = n
+    let j = n
+    while getline(i)==s && i>0
+        let i-=1
+    endwhile
+
+    while getline(j)==s && j<=line('$')
+        let j+=1
+    endwhile
+
+    call cursor(i+1, 0)
+    norm V
+    call cursor(j-1, 0)
+endfun
+
+com! -bar NT :call OpenNerdTag()
+fun! OpenNerdTag()
+    if winnr('$')!=1
+        only
+    endif
+    TlistOpen
+    NERDTree
+    wincmd J
+    wincmd W
+    wincmd L
+    NERDTreeFocus
+    normal AA
+    wincmd p
+endfun
+
+nnoremap <leader>=       :U =<CR>
+nnoremap <leader>-       :U ━<CR>
+com! -bar -nargs=? U     :call UnderLine(<f-args>)
+fun! UnderLine(...)
+    let l:chr = '='
+    if a:0 > 0 && strdisplaywidth(a:1)==1
+        let l:chr = a:1
+    endif
+    normal o
+    call setline('.', repeat(l:chr, strdisplaywidth(getline(line('.')-1))))
+endfun
+
+nnoremap <C-middlemouse> :call AnimateText(@*)<cr>
+fun! AnimateText(text)
+    let lineno = line('.')
+    let lines = split(a:text, "\n")
+    for line in lines
+        call setline(lineno, '')
+        let chars = split(line, '.\zs')
+        let words = ''
+        for c in chars
+            let words .= c
+            call setline(lineno, words)
+            call cursor(lineno, 0)
+            "normal z.
+            if c !~ '\s'
+                sleep 50m
+                redraw
+            endif
+        endfor
+        let lineno += 1
+    endfor
+endfun
 
 com! -bar -nargs=0 ClearUndo call <SID>ClearUndo()
 fun! <SID>ClearUndo()
@@ -242,18 +315,34 @@ endfun
 " plugins {{{
 call pathogen#infect()
 
+let g:ctrlp_dotfiles = 0
+let g:ctrlp_max_depth = 30
+let g:ctrlp_max_height = 25
+let g:ctrlp_use_caching = 1
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_prompt_mappings = { 'MarkToOpen()': ['<C-z>', '<C-space', '<C-@>'] }
+let g:ctrlp_custom_ignore = {
+                            \ 'dir':  '\.git$\|\.hg$\|\.svn$',
+                            \ 'file': '\.pdf$\|\.epub$\|\.mobi$\|\.djvu$\|\.chm$\|'.
+                                    \ '\.mp[34]$\|\.og[gva]$\|\.flv$\|\.avi$\|\.mov$\|\.swf$\|'.
+                                    \ '\.jpe\?g$\|\.png$\|\.gif$\|'.
+                                    \ '\.zip$\|\.bz2$\|\.gz$\|\.tar$\|\.7z$\|\.rar$',
+                            \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+                            \}
+nnoremap <C-space> :CtrlPMRUFiles<CR>
+cnoremap <C-@>     :CtrlPMRUFiles<CR>
+
 let g:CommandTCancelMap = '<esc>'
-cnoremap <C-t> :CommandT<CR>
+cnoremap <C-t>     :CommandT<CR>
 
 let g:Powerline_symbols = 'fancy'
 
 let g:solarized_menu = 0
 
-
 let g:yankring_default_menu_mode = 0
 nnoremap <C-y> :YRShow<CR>
 
-nnoremap <C-u> :GundoToggle \| wincmd l<CR>
+nnoremap <leader>u :GundoToggle \| wincmd l<CR>
 
 let g:alternateExtensions_html = 'md,markdown'
 let g:alternateExtensions_md = 'html'
@@ -282,6 +371,29 @@ let g:vimwiki_valid_html_tags = 'b,i,s,u,sub,sup,kbd,br,hr,table,tr,td'
 let g:vimwiki_html_header_numbering = 1
 let g:vimwiki_html_header_numbering_sym = '.'
 let g:vimwiki_listsyms = ' ¼½¾✓'
+
+let g:SuperTabMappingForward = '<C-n>'
+let g:SuperTabDefaultCompletionType = '<C-n>'
+let g:SuperTabContextDefaultCompletionType = '<C-n>'
+aug SuperTab
+    au!
+    au FileType *   call BindSuperTab()
+aug END
+fun! BindSuperTab()
+    let g:SuperTabMappingForward = '<C-n>'
+    if index(['css'], &ft)!=-1
+        let tab = '<C-x><C-o>'
+    elseif index(['javascript', 'python', 'text'], &ft)!=-1
+        let tab = 'context'
+    elseif index(['html'], &ft)!=-1
+        let g:SuperTabMappingForward = '<C-random>'  "SPARKUP/SNIPMATE
+        let tab = '<C-p>'
+    else
+        let tab = '<C-n>'
+    endif
+    call SuperTabSetDefaultCompletionType(tab)
+endfun
+
 "}}}
 
 " syntaxs {{{
