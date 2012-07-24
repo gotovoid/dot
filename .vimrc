@@ -22,8 +22,8 @@ set fencs=utf-8,chinese,latin1 fenc=utf-8 enc=utf-8
 set foldnestmax=2
 " don't auto wrap long text
 "set formatoptions=mnoq
-" mbyte support when <gq>
-set formatoptions+=m
+" mbyte/list-header support when <gq>
+set formatoptions+=mn
 " gVim will load `$VIM/vimrc` before loading `~/.vimrc`,
 " add `finish` at the beginning of `$VIM/vimrc` to hide `Menu`,
 " because `$VIM/vimrc` calls `syntax on` which will build menu!
@@ -301,10 +301,10 @@ try:
     from urllib2 import urlopen
     from urllib import urlencode
     url = 'http://www.google.com/ig/api?' + urlencode({'hl':'zh-cn', 'weather':vim.eval('a:city')})
-    xml = ET.XML(unicode(urlopen(url).read() ,'gb2312').encode('utf-8')).find('.//forecast_conditions')
+    xml = ET.XML(unicode(urlopen(url, timeout=5).read() ,'gb2312').encode('utf-8')).find('.//forecast_conditions')
     if xml is None:
         raise Exception('city not found!')
-    weather = dict((x.tag, x.get('data').encode('utf-8')) for x in xml.getchildren())
+    weather = {x.tag:x.get('data').encode('utf-8') for x in xml.getchildren()}
     vim.command('return "%s(%s°C~%s°C)"' % (weather['condition'], weather['low'], weather['high']))
 except Exception, e:
     vim.command('return "Error: %s"' % e)
