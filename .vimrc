@@ -321,6 +321,16 @@ endfun
 " plugins {{{
 call pathogen#infect()
 
+let g:showmarks_enable = 0
+let g:showmarks_include = "abcdefghijklmnopqrstuvwxyz".
+                        \ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let g:showmarks_textlower = " "
+let g:showmarks_textupper = " "
+let g:showmarks_textother = " "
+let g:showmarks_hlline_lower = 1
+let g:showmarks_hlline_upper = 1
+let g:showmarks_hlline_other = 1
+
 let g:ctrlp_dotfiles = 0
 let g:ctrlp_max_depth = 30
 let g:ctrlp_max_height = 25
