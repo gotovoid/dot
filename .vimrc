@@ -65,6 +65,8 @@ set wildmenu
 " mappings {{{
 let mapleader = ','
 " normal mode
+nnoremap *               :let @/=printf('\<%s\>\c', expand('<cword>'))<CR>
+nnoremap #               :let @/=printf('\<%s\>\C', expand('<cword>'))<CR>
 nnoremap <F5>            : noh \| redraw!<CR>
 nnoremap <C-l>           gt
 nnoremap <C-h>           gT
@@ -88,9 +90,9 @@ nnoremap <leader><space> : NERDTreeToggle<CR>
 nnoremap <leader><enter> : NERDTreeToggle<CR>
 " insert mode
 inoremap <leader>co      © Kev++ <http://hjkl.me>
+inoremap <expr> <leader>fn     expand('%:p')
 inoremap <leader>dt      <C-r>=strftime('%Y-%m-%d')<CR>
 inoremap <leader>tm      <C-r>=strftime('%H:%M:%S')<CR>
-inoremap <leader>fn      <C-r>=expand('%:p')<CR>
 inoremap <C-t>           <esc>!!toilet -f future<CR>
 inoremap <C-@>           <C-x><C-u>
 inoremap <C-space>       <C-x><C-u>
@@ -117,6 +119,8 @@ vnoremap <C-m>           !markdown<CR>
 vnoremap <C-p>           !pandoc<CR>
 vnoremap <C-f>           !figlet<CR>
 vnoremap <C-t>           !toilet -f future<CR>
+" others
+cnoreabb <expr> W        getcmdtype()==':'&&getcmdline()=~#'^W'?'w':'W'
 "}}}
 
 " commands {{{
@@ -136,6 +140,8 @@ aug XXX
     au FileType *               setl textwidth=0
     au FileType text            setl spell dictionary= complete+=kspell completefunc=MiniM
     au FileType help            setl number nospell
+    au FileType help            nnoremap <buffer> <TAB>    :call search('<BAR>\zs[^<BAR>[:space:]]*<BAR>')<CR>
+    au FileType help            nnoremap <buffer> <S-TAB>  :call search('<BAR>\zs[^<BAR>[:space:]]*<BAR>', 'b')<CR>
     au FileType markdown        let &l:makeprg = 'pandoc -o %:r.html %'
     au FileType markdown        nnoremap <buffer> <F5> :write \| silent make \| redraw!<CR>
     au FileType coffee.python   setl makeprg=coffee\ -c\ %
@@ -329,7 +335,7 @@ let g:ctrlp_custom_ignore = {
                                     \ '\.zip$\|\.bz2$\|\.gz$\|\.tar$\|\.7z$\|\.rar$',
                             \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
                             \}
-nnoremap <C-space> :CtrlPMRUFiles<CR>
+cnoremap <C-space> :CtrlPMRUFiles<CR>
 cnoremap <C-@>     :CtrlPMRUFiles<CR>
 
 let g:CommandTCancelMap = '<esc>'
@@ -340,7 +346,7 @@ let g:Powerline_symbols = 'fancy'
 let g:solarized_menu = 0
 
 let g:yankring_default_menu_mode = 0
-nnoremap <C-y> :YRShow<CR>
+nnoremap <leader>y :YRShow<CR>
 
 nnoremap <leader>u :GundoToggle \| wincmd l<CR>
 
