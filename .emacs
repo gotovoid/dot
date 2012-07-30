@@ -31,6 +31,7 @@
 (global-set-key [f6] 'global-hl-line-mode)
 (global-set-key [f7] 'blank-mode)
 (global-set-key [f8] 'toggle-truncate-lines)
+(global-set-key "\C-x\C-g" 'magit-status)
 
 (defun my-indent-region (N)
   (interactive "p")
