@@ -52,7 +52,7 @@ set tabpagemax=50
 set tabstop=8 softtabstop=4 shiftwidth=4 expandtab
 set tags=./tags;/,~/.vim/tags
 set thesaurus=~/.vim/tsr.txt
-set timeoutlen=500
+set timeoutlen=500 ttimeoutlen=0
 set titlestring=%F\ %M
 set undofile
 set virtualedit=block
