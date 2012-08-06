@@ -7,9 +7,9 @@
 ;; emacs
 (xterm-mouse-mode t)
 (add-to-list 'load-path "~/.emacs.d")
-(load "figlet.el")
+(add-to-list 'load-path "~/.emacs.d/plugins/*")
 (require 'blank-mode)
-(require 'yasnippet-bundle)
+(require 'yasnippet)
 (require 'magit)
 (require 'w3m-load)
 (delete-selection-mode t)
