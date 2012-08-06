@@ -3,98 +3,64 @@
 ;; | |_| |_  | | ' /| |Kev++
 ;; |  _  | |_| | . \| |___
 ;; |_| |_|\___/|_|\_\_____|
+;; http://www.emacswiki.org/emacs/EmacsCrashCode
 
-;; emacs
-(xterm-mouse-mode t)
 (add-to-list 'load-path "~/.emacs.d")
-(add-to-list 'load-path "~/.emacs.d/plugins/*")
+(add-to-list 'load-path "~/.emacs.d/plugins/yasnippet")
 (require 'blank-mode)
 (require 'yasnippet)
 (require 'magit)
-(require 'w3m-load)
-(delete-selection-mode t)
-(show-paren-mode t)
-(ido-mode t)
-(ruler-mode t)
-(tooltip-mode -1)
-(global-linum-mode t)
-(global-hl-line-mode t)
-(toggle-indicate-empty-lines t)
-;(add-to-list 'auto-mode-alist '("\\.vim$" . python-mode))
 
-;; key-bindings
-
-(global-set-key [f1] 'delete-other-windows)
-(global-set-key [f2] 'find-file-other-window)
-(global-set-key [f5] (lambda ()
-                       (interactive)
-                       (load-file "~/.emacs")))
-(global-set-key [f6] 'global-hl-line-mode)
-(global-set-key [f7] 'blank-mode)
-(global-set-key [f8] 'toggle-truncate-lines)
-(global-set-key "\C-xg" 'magit-status)
-
-(defun my-indent-region (N)
-  (interactive "p")
-  (if mark-active
-      (progn (indent-rigidly (min (mark) (point)) (max (mark) (point)) (* N 4))
-             (setq deactivate-mark nil))
-    (self-insert-command N)))
-
-(defun my-unindent-region (N)
-  (interactive "p")
-  (if mark-active
-      (progn (indent-rigidly (min (mark) (point)) (max (mark) (point)) (* N -4))
-             (setq deactivate-mark nil))
-    (self-insert-command N)))
-(global-set-key ">" 'my-indent-region)
-(global-set-key "<" 'my-unindent-region)
-
-
-;; org-mode
-(setq org-enforce-todo-dependencies t)
-(setq org-log-done 'time)
-(setq org-agenda-files (file-expand-wildcards "~/org/*.org"))
-(define-key global-map "\C-ca" 'org-agenda)
-
-;; buffer
-(global-auto-revert-mode t)
-(setq make-backup-files nil)
-(setq set-mark-command-repeat-pop t)
-
-;; gui
-(setq line-number-mode t
-      column-number-mode t)
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
-(setq mouse-wheel-progressive-speed nil)
-(setq mouse-wheel-follow-mouse t)
+(setq default-major-mode 'text-mode)
+(setq echo-keystrokes 0.01)
+(setq inhibit-startup-message t)
 (setq scroll-step 1)
-(setq-default truncate-lines t)
-(setq redisplay-dont-pause t)
+(setq sentence-end-double-space nil)
+(setq set-mark-command-repeat-pop t)
+(setq tab-width 4)
 (setq-default cursor-type '(bar . 4))
+(setq-default indent-tabs-mode nil)
+(setq-default indicate-empty-lines t)
+(setq-default truncate-lines t)
+
+(ido-mode t)
 (set-cursor-color "purple")
-(setq-default cursor-in-non-selected-windows t)
+(delete-selection-mode t)
+(global-linum-mode t)
+(menu-bar-mode -1)
+(show-paren-mode t)
+(tool-bar-mode -1)
+(xterm-mouse-mode t)
+
+(global-set-key "\M-k" 'kill-this-buffer)
+(global-set-key "\M-n" 'switch-to-next-buffer)
+(global-set-key "\M-p" 'switch-to-prev-buffer)
+(global-set-key (kbd "<apps>") 'execute-extended-command)
+(global-set-key [f5] (lambda ()
+               (interactive)
+		       (load-file "~/.emacs")))
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 's 'replace-regexp)
+
 (custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
  '(default ((t (:height 120 :family "DejaVu Sans Mono")))))
 
-;; space
-(setq-default sentence-end-double-space nil)
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60
-                        64 68 72 76 80 84 88 92 96 100 104 108 112 116 120))
-(define-key text-mode-map (kbd "<tab>") 'tab-to-tab-stop)
-(setq-default c-default-style "awk" c-basic-offset 4)
-(add-hook 'c-mode-hook (lambda () (define-key c-mode-map "\C-m" 'c-context-line-break)))
+(defun delete-line ()
+  (interactive)
+  (setq old-col (current-column))
+  (end-of-line)
+  (if (= (current-column) 0)
+      (delete-char 1)
+    (progn
+      (beginning-of-line)
+      (kill-line)
+      (delete-char 1)
+      (move-to-column old-col))))
 
+(defun make-backup-file-name (filename)
+  (expand-file-name
+    (concat "." (file-name-nondirectory filename) "~")
+    (file-name-directory filename)))
 
-;; enable
-(put 'set-goal-column 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
-(put 'narrow-to-page 'disabled nil)
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
