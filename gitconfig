@@ -2,7 +2,12 @@
         name = Kev++
         email = gotovoid@gmail.com
 [core]
-	excludesfile = /home/kev/.gitignore
+        excludesfile = /home/kev/.gitignore
+        editor = vim
+[diff]
+        tool = vimdiff
+[difftool]
+        prompt = false
 [alias]
         st = status
         ci = commit
@@ -26,6 +31,6 @@
         old = red bold
         new = green bold
 [color "status"]
-        added = yellow
-        changed = green
+        added = green
+        changed = red
         untracked = cyan
