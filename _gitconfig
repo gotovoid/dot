@@ -1,6 +1,8 @@
 [user]
         name = Kev++
         email = gotovoid@gmail.com
+[github]
+        user = gotovoid
 [core]
         excludesfile = /home/kev/.gitignore
         editor = vim

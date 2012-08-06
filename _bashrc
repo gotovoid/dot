@@ -116,6 +116,7 @@ alias tmux='tmux -2'
 alias deflate='python -c "import sys; sys.stdout.write(sys.stdin.read().decode(\"zlib\"))"'
 alias golf="vim -Nu NONE +'set ls=2 stl=http://hjkl.me'"
 
+export GITHUB_TOKEN=$(awk '{print $2}' .gist-vim)
 export UBUNTU_MENUPROXY=0
 export PYTHONSTARTUP=~/.pystartup.py
 export PS1='\w $(git_br)$ '
@@ -177,8 +178,10 @@ typeset -fx print bold sw
 # watch -tn 1 'toilet -f future $(date +%T)'
 
 # tmux
-# xmodmap -e 'remove lock = Caps_Lock'
+#xmodmap -e 'remove lock = Caps_Lock'
+xmodmap -e 'clear Lock'
 xmodmap -e 'keycode 66 = Insert' &> /dev/null
+#setxkbmap -layout us
 
 
 # digital clock
