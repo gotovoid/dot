@@ -1,0 +1,31 @@
+[user]
+        name = Kev++
+        email = gotovoid@gmail.com
+[core]
+	excludesfile = /home/kev/.gitignore
+[alias]
+        st = status
+        ci = commit
+        br = branch
+        co = checkout
+        df = diff
+        lg = log -p
+[color]
+        branch = auto
+        diff = auto
+        interactive = auto
+        status = auto
+        ui = auto
+[color "branch"]
+        current = yellow reverse
+        local = yellow
+        remote = green
+[color "diff"]
+        meta = yellow bold
+        frag = magenta bold
+        old = red bold
+        new = green bold
+[color "status"]
+        added = yellow
+        changed = green
+        untracked = cyan
