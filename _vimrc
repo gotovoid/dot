@@ -65,8 +65,10 @@ set wildmenu
 " mappings {{{
 let mapleader = ','
 " normal mode
-nnoremap *               :let @/=printf('\<%s\>\c', expand('<cword>'))<CR>
-nnoremap #               :let @/=printf('\<%s\>\C', expand('<cword>'))<CR>
+nnoremap Y               y$
+nnoremap *               : let @/=printf('\<%s\>\c', expand('<cword>'))<CR>
+nnoremap #               : let @/=printf('\<%s\>\C', expand('<cword>'))<CR>
+nnoremap <expr> gm         float2nr(strdisplaywidth(getline('.'))/2+1) . "\<BAR>"
 nnoremap <F5>            : noh \| redraw!<CR>
 nnoremap <C-l>           gt
 nnoremap <C-h>           gT
@@ -109,9 +111,9 @@ cnoremap <C-a>           <home>
 cnoremap <C-e>           <end>
 cnoremap <C-b>           <left>
 cnoremap <C-f>           <right>
-cnoremap ,b              <S-left>
-cnoremap ,f              <S-right>
-cnoremap ,d              <S-right><C-w>
+cnoremap <leader>b       <S-left>
+cnoremap <leader>f       <S-right>
+cnoremap <leader>d       <S-right><C-w>
 cnoremap <C-d>           <delete>
 cnoremap <C-p>           <up>
 cnoremap <C-n>           <down>
