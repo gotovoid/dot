@@ -109,11 +109,12 @@ cnoremap <C-a>           <home>
 cnoremap <C-e>           <end>
 cnoremap <C-b>           <left>
 cnoremap <C-f>           <right>
-cnoremap <A-b>           <S-left>
-cnoremap <A-f>           <S-right>
+cnoremap ,b              <S-left>
+cnoremap ,f              <S-right>
+cnoremap ,d              <S-right><C-w>
+cnoremap <C-d>           <delete>
 cnoremap <C-p>           <up>
 cnoremap <C-n>           <down>
-cnoremap <C-d>           <delete>
 " visual mode
 vnoremap <C-m>           !markdown<CR>
 vnoremap <C-p>           !pandoc<CR>
