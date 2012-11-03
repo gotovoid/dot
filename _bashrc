@@ -125,6 +125,7 @@ PATH=$PATH:~/bin
 
 #bind -x '"\ed":"date +%F\ %T"'
 #bind '"\C-q":"\"\"\C-b"'
+bind 'set completion-ignore-case on'
 stty start undef
 
 # git
