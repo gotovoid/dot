@@ -324,6 +324,8 @@ endfun
 " plugins {{{
 call pathogen#infect()
 
+let g:NERDTreeIgnore=['\.pyc$', '\~$']
+
 let g:showmarks_enable = 0
 let g:showmarks_include = "abcdefghijklmnopqrstuvwxyz".
                         \ "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -354,7 +356,7 @@ cnoremap <C-@>     :CtrlPMRUFiles<CR>
 let g:CommandTCancelMap = '<esc>'
 cnoremap <C-t>     :CommandT<CR>
 
-let g:Powerline_symbols = 'fancy'
+"let g:Powerline_symbols = 'fancy'
 
 let g:solarized_menu = 0
 
@@ -390,28 +392,6 @@ let g:vimwiki_valid_html_tags = 'b,i,s,u,sub,sup,kbd,br,hr,table,tr,td'
 let g:vimwiki_html_header_numbering = 1
 let g:vimwiki_html_header_numbering_sym = '.'
 let g:vimwiki_listsyms = ' ¼½¾✓'
-
-let g:SuperTabMappingForward = '<C-n>'
-let g:SuperTabDefaultCompletionType = '<C-n>'
-let g:SuperTabContextDefaultCompletionType = '<C-n>'
-aug SuperTab
-    au!
-    au FileType *   call BindSuperTab()
-aug END
-fun! BindSuperTab()
-    let g:SuperTabMappingForward = '<C-n>'
-    if index(['css'], &ft)!=-1
-        let tab = '<C-x><C-o>'
-    elseif index(['javascript', 'python', 'text'], &ft)!=-1
-        let tab = 'context'
-    elseif index(['html'], &ft)!=-1
-        let g:SuperTabMappingForward = '<C-random>'  "SPARKUP/SNIPMATE
-        let tab = '<C-p>'
-    else
-        let tab = '<C-n>'
-    endif
-    call SuperTabSetDefaultCompletionType(tab)
-endfun
 
 "}}}
 
